@@ -1,0 +1,31 @@
+#正在跑 port:1524
+nohup python3 train.py --mode de2en --save_log de2en_rl_y1 --save_dir result_de2en_rl_y1 --gpu 2 --save_file bleu_de2en_rl_y &
+nohup python3 train.py --mode en2de --save_log en2de_rl_y1 --save_dir result_en2de_rl_y1 --gpu 3 --save_file bleu_en2de_rl_y &
+port:1521
+nohup python3 train.py --mode de2en --save_log de2en_rl_x_cos --save_dir result_de2en_rl_x_cos --gpu 1 --save_file bleu_de2en_rl_x_cos &
+nohup python3 train.py --mode de2en --save_log de2en_rl_x_cosre --save_dir result_de2en_rl_x_cosre --gpu 1 --save_file bleu_de2en_rl_x_cosre &
+#正常，别样概率，最佳bleu
+nohup python3 test_1.py --mode de2en --gpu 1 --load_log ../rl/de2en_rl_x4 --save_dir ../rl/result_de2en_rl_x4_test2 &
+nohup python3 test_1.py --mode en2de --gpu 0 --load_log ../rl/en2de_rl_x --save_dir ../rl/result_en2de_rl_x_test2 &
+
+nohup python3 test_1.py --mode de2en --gpu 1 --load_log ../rl/de2en_rl_y --save_dir ../rl/result_de2en_rl_y_test2 &
+nohup python3 test_1.py --mode en2de --gpu 2 --load_log ../rl/en2de_rl_y --save_dir ../rl/result_en2de_rl_y_test2 &
+#训练
+rl文件夹对预训练2和3rl训练
+nohup python3 train.py --mode en2de --save_log en2de_rl_x --save_dir result_en2de_rl_x --gpu 0 --save_file bleu_en2de_rl_x &
+nohup python3 train.py --mode en2de --save_log en2de_rl_y --save_dir result_en2de_rl_y --gpu 1 --save_file bleu_en2de_rl_y &
+nohup python3 train.py --mode de2en --save_log de2en_rl_y --save_dir result_de2en_rl_y --gpu 2 --save_file bleu_de2en_rl_y &
+#预训练1的rl1模型(单个+all)
+nohup python3 train.py --mode en2de --save_log en2de_rl --save_dir result_en2de_rl --gpu 0 --save_file bleu_en2de_rl &
+nohup python3 train.py --mode de2en --save_log de2en_rl --save_dir result_de2en_rl --gpu 1 --save_file bleu_de2en_rl &
+nohup python3 train.py --mode en2de --save_log en2de_rl_all --save_dir result_en2de_rl_all --gpu 0 --save_file bleu_en2de_rl_all &
+nohup python3 train.py --mode de2en --save_log de2en_rl_all --save_dir result_de2en_rl_all --gpu 1 --save_file bleu_de2en_rl_all &
+#选择预训练2的rl1模型
+nohup python3 train.py --mode en2de --save_log en2de_rl_x_all --save_dir result_en2de_rl_x_all --gpu 2 --save_file bleu_en2de_rl_x_all &
+nohup python3 train.py --mode de2en --save_log de2en_rl_x_all --save_dir result_de2en_rl_x_all --gpu 3 --save_file bleu_de2en_rl_x_all &
+#预训练3的rl1模型all
+nohup python3 train.py --mode en2de --save_log en2de_rl_y_all --save_dir result_en2de_rl_y_all --gpu 2 --save_file bleu_en2de_rl_y_all &
+nohup python3 train.py --mode de2en --save_log de2en_rl_y_all --save_dir result_de2en_rl_y_all --gpu 3 --save_file bleu_de2en_rl_y_all &
+
+
+
