@@ -43,7 +43,7 @@ class Hyperparams:
     # lr = 0.01
     warmup_step = 8000
     num_blocks = 2 # number of encoder/decoder blocks
-    num_epochs = 2#记得改
+    num_epochs = 1#记得改
     num_heads = 4
     dropout_rate_tran = 0.3
     sinusoid = True # If True, use sinusoid. If false, positional embedding.

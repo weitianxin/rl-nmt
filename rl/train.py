@@ -24,6 +24,21 @@ def my_func(x):
             final.append(slic)
     return np.array(final, dtype=np.float32)
 
+def change_y(x):
+    # x will be a numpy array with the contents of the placeholder below
+    y = np.array(x == 3, dtype=np.int32)
+    final = []
+    for slic in y:
+        index = np.argmax(slic)
+        if index == 0:
+            temp = np.ones_like(slic, dtype=np.int32)
+            final.append(temp)
+        else:
+            slic[:index] = 1
+            slic[index:] = 0
+            final.append(slic)
+    return np.array(final, dtype=np.int32)
+
 class Graph():
     def __init__(self, is_training=True,beam_width=5,mode="de2en"):
         self.graph = tf.Graph()
@@ -107,7 +122,11 @@ class Graph():
 
             if is_training:
                 self.y_target =  tf.concat((self.y[:,1:],tf.zeros((self.batch_size,1),dtype=tf.int32)),axis=1)
-                _,self.logits,self.y_preds = self.model(self.y)
+                #new!
+                input_y = tf.py_func(change_y, [self.y], tf.int32)*self.y
+                input_y.set_shape([None,hp.maxlen])
+                _,self.logits,self.y_preds = self.model(input_y)
+                # new!
                 prob = tf.nn.softmax_cross_entropy_with_logits(logits=self.logits,
                                                                        labels=tf.one_hot(self.y_target, len(self.decoder_2idx)))
                 self.istarget = tf.to_float(tf.not_equal(self.y_target, 0))
@@ -397,7 +416,7 @@ def train():
     #argparse
     parser = argparse.ArgumentParser(description='manual to this script')
     parser.add_argument('--mode', type=str, default="de2en")
-    parser.add_argument('--gpu', type=str, default=0)
+    parser.add_argument('--gpu', type=str, default="0")
     parser.add_argument('--save_dir', type=str, default="result")
     parser.add_argument('--save_file', type=str, default="bleu.txt")
     parser.add_argument('--save_log', type=str, default="logdir")
@@ -479,7 +498,7 @@ def train():
     config.gpu_options.allow_growth = True
     restore_file=["/step_{}".format(i*500+9000) for i in range(20)]
     if mode=="de2en":
-        restore_file=["/step_12000"]
+        restore_file=["/step_7000"]
     else:
         restore_file = ["/step_15500"]
     for file in restore_file:
@@ -493,10 +512,10 @@ def train():
                 # saver2.restore(sess, '../../logdir/logdir_de2en_bpe'  + file)
                 # saver1.restore(sess, "de2en" + "/step_1430")#"/model_epoch_12999"
                 # saver2.restore(sess, "de2en" + "/step_1430")
-                # saver1.restore(sess, "../ZRNMT/{}".format(mode) + file)
-                # saver2.restore(sess, "../ZRNMT/{}".format(mode) + file)
-                saver1.restore(sess, "../ZRNMT/{}_pre_y".format(mode) + file)
-                saver2.restore(sess, "../ZRNMT/{}_pre_y".format(mode) + file)
+                saver1.restore(sess, "../ZRNMT/{}".format(mode) + file)
+                saver2.restore(sess, "../ZRNMT/{}".format(mode) + file)
+                # saver1.restore(sess, "../ZRNMT/{}_pre_y".format(mode) + file)
+                # saver2.restore(sess, "../ZRNMT/{}_pre_y".format(mode) + file)
 
                 # saver1.restore(sess, "../ZRNMT/{}_pre".format(mode) + "/step_1500")
                 # saver2.restore(sess, "../ZRNMT/{}_pre".format(mode) + "/step_1500")#03
@@ -508,10 +527,10 @@ def train():
                 # saver2.restore(sess, '../../logdir/logdir_en2de_bpe' + file)
                 # saver1.restore(sess, "en2de" + "/step_3363")
                 # saver2.restore(sess, "en2de" + "/step_3363")
-                # saver1.restore(sess, "../ZRNMT/{}".format(mode) + file)
-                # saver2.restore(sess, "../ZRNMT/{}".format(mode) + file)
-                saver1.restore(sess, "../ZRNMT/{}_pre_y".format(mode) + file)
-                saver2.restore(sess, "../ZRNMT/{}_pre_y".format(mode) + file)
+                saver1.restore(sess, "../ZRNMT/{}".format(mode) + file)
+                saver2.restore(sess, "../ZRNMT/{}".format(mode) + file)
+                # saver1.restore(sess, "../ZRNMT/{}_pre_y".format(mode) + file)
+                # saver2.restore(sess, "../ZRNMT/{}_pre_y".format(mode) + file)
                 # saver1.restore(sess, "../ZRNMT/{}_pre".format(mode) + "/step_2500")
                 # saver2.restore(sess, "../ZRNMT/{}_pre".format(mode) + "/step_2500")
                 # saver1.restore(sess, "../ZRNMT/{}_pre_y_1".format(mode) + "/step_11000")
